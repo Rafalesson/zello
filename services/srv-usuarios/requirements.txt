@@ -1,2 +1,9 @@
 fastapi
 uvicorn[standard]
+
+# Dependências para banco de dados e ORM
+sqlalchemy
+psycopg2-binary # Driver do PostgreSQL
+
+# Dependências para segurança de senha
+passlib[bcrypt]

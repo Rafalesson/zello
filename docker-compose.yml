@@ -9,7 +9,7 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - ./services/srv-usuarios:/app
+      - ./services/srv-usuarios:/code
     environment:
       - DATABASE_URL=postgresql://user:password@db-usuarios/mydatabase
     depends_on:
