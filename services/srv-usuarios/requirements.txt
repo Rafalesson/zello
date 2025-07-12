@@ -1,2 +1,12 @@
 fastapi
 uvicorn[standard]
+
+# Dependências para banco de dados e ORM
+sqlalchemy
+psycopg2-binary
+
+# Dependências para segurança de senha
+passlib[bcrypt]
+
+# Dependência opcional do Pydantic para validação de e-mail
+pydantic[email]

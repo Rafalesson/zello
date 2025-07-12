@@ -1,20 +1,16 @@
-# Dockerfile para serviços FastAPI
-
-# Usamos uma imagem base específica e leve para builds consistentes.
 FROM python:3.11-slim
 
-# Define o diretório de trabalho dentro do container.
-WORKDIR /app
+# Define um diretório de trabalho limpo.
+WORKDIR /code
 
-# Copia e instala as dependências antes do código da aplicação para otimizar o cache do Docker.
-COPY requirements.txt .
+# Copia e instala as dependências primeiro para otimizar o cache.
+COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código da aplicação para o diretório de trabalho.
+# Copia todo o contexto do build (incluindo a pasta 'app') para o WORKDIR.
 COPY . .
 
-# Expõe a porta que o Uvicorn usará.
+# Expõe a porta.
 EXPOSE 8000
 
-# Comando para iniciar o servidor. O host 0.0.0.0 torna o serviço acessível a partir de outros containers.
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
