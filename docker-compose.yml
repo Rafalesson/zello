@@ -1,0 +1,43 @@
+# docker-compose.yml
+
+services:
+  # Serviço de Usuários (Python/FastAPI)
+  usuarios-service:
+    build:
+      context: ./services/srv-usuarios
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./services/srv-usuarios:/app
+    environment:
+      - DATABASE_URL=postgresql://user:password@db-usuarios/mydatabase
+    depends_on:
+      - db-usuarios
+
+  # Banco de Dados para o Serviço de Usuários
+  db-usuarios:
+    # A imagem está 'pinada' a uma versão específica do Postgres (15) e a uma variante 'alpine' (menor).
+    # Isso garante que o build seja sempre o mesmo e evita surpresas.
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_usuarios:/var/lib/postgresql/data
+
+  # API Gateway (Go)
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - usuarios-service
+
+volumes:
+  postgres_data_usuarios:
