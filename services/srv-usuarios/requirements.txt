@@ -10,3 +10,7 @@ passlib[bcrypt]
 
 # Dependência opcional do Pydantic para validação de e-mail
 pydantic[email]
+
+# Novas dependências para autenticação JWT e OAuth2
+python-jose[cryptography]
+python-multipart

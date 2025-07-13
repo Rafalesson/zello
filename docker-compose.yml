@@ -12,13 +12,15 @@ services:
       - ./services/srv-usuarios:/code
     environment:
       - DATABASE_URL=postgresql://user:password@db-usuarios/mydatabase
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
     depends_on:
-      - db-usuarios
+      db-usuarios:
+        condition: service_healthy
 
   # Banco de Dados para o Serviço de Usuários
   db-usuarios:
-    # A imagem está 'pinada' a uma versão específica do Postgres (15) e a uma variante 'alpine' (menor).
-    # Isso garante que o build seja sempre o mesmo e evita surpresas.
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=user
@@ -28,6 +30,12 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data_usuarios:/var/lib/postgresql/data
+    # BLOCO ADICIONADO: Define como verificar a saúde do container do banco de dados.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # API Gateway (Go)
   api-gateway:
