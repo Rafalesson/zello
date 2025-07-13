@@ -4,7 +4,6 @@ from contextlib import contextmanager
 from sqlalchemy.orm import Session
 import uuid
 
-# Importações corrigidas para a nova estrutura
 from app.database.session import SessionLocal
 from app.crud import crud_usuario
 from app.models.usuario import TipoUsuarioEnum, Usuario
