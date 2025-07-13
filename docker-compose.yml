@@ -19,25 +19,70 @@ services:
       db-usuarios:
         condition: service_healthy
 
-  # Banco de Dados para o Serviço de Usuários
   db-usuarios:
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
+      - POSTG"RES_PASSWORD=password
       - POSTGRES_DB=mydatabase
     ports:
-      - "5432:5432"
+      - "5432:5432" # Porta para o DB de usuários
     volumes:
       - postgres_data_usuarios:/var/lib/postgresql/data
-    # BLOCO ADICIONADO: Define como verificar a saúde do container do banco de dados.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U user -d mydatabase"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  # API Gateway (Go)
+  # -----------------
+  # SERVIÇOS DE AGENDAMENTO
+  # -----------------
+  srv-agendamentos:
+    build:
+      context: ./services/srv-agendamentos # contexto de build
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8000" # Expondo a porta (8002)
+    volumes:
+      - ./services/srv-agendamentos:/code
+    environment:
+      - DATABASE_URL=postgresql://user:password@db-agendamentos/db_agendamentos
+    depends_on:
+      db-agendamentos:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started # Espera o RabbitMQ iniciar
+
+  db-agendamentos:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db_agendamentos # Nome do banco de dados diferente do DB de usuários
+    ports:
+      - "5433:5432" # Mapeando para uma porta diferente na máquina host
+    volumes:
+      - postgres_data_agendamentos:/var/lib/postgresql/data # Volume de dados separado
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d db_agendamentos"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # -----------------
+  # SERVIÇO DE MENSAGERIA
+  # -----------------
+  rabbitmq:
+    image: rabbitmq:3.13-management # A tag -management inclui uma interface web
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"   # Porta para comunicação dos serviços
+      - "15672:15672" # Porta para a interface de gerenciamento web
+
+  # -----------------
+  # API GATEWAY
+  # -----------------
   api-gateway:
     build:
       context: ./services/api-gateway
@@ -45,7 +90,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - usuarios-service
+      - usuarios-service # Dependência do serviço de usuários
+      - srv-agendamentos # Dependência do serviço de agendamentos
 
 volumes:
-  postgres_data_usuarios:
+  postgres_data_usuarios: # Volume de dados para o DB de usuários
+  postgres_data_agendamentos: # Volume de dados para o DB de agendamentos
