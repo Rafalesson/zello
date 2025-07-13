@@ -17,3 +17,5 @@ python-multipart
 
 # Dependência para a ferramenta de linha de comando
 typer[all]
+
+pydantic-settings
