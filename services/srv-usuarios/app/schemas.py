@@ -77,3 +77,18 @@ class MedicoPublic(BaseModel):
 
     class Config:
         from_attributes = True
+        
+# ==================
+# Schemas para Atualização de Usuário e Paciente
+# ==================
+class UsuarioUpdate(BaseModel):
+    # Apenas os campos que permitimos que sejam atualizados no usuário
+    is_active: Optional[bool] = None
+
+class PacienteUpdate(BaseModel):
+    # Apenas os campos que permitimos que sejam atualizados no paciente
+    nome_completo: Optional[str] = None
+    data_nascimento: Optional[datetime.date] = None
+    telefone: Optional[str] = None
+    # Permitimos atualizar dados do usuário de forma aninhada
+    usuario: Optional[UsuarioUpdate] = None
