@@ -8,6 +8,16 @@ from typing import Optional, List
 from .models import TipoUsuarioEnum
 
 # ==================
+# Schemas de Autenticação
+# ==================
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+
+# ==================
 # Schemas de Usuário
 # ==================
 class UsuarioBase(BaseModel):
@@ -33,7 +43,6 @@ class PacienteCreate(BaseModel):
     nome_completo: str
     data_nascimento: datetime.date
     telefone: Optional[str] = None
-    # Dados do usuário são aninhados aqui para criação conjunta
     usuario: UsuarioCreate
 
 class PacientePublic(BaseModel):
@@ -41,14 +50,13 @@ class PacientePublic(BaseModel):
     nome_completo: str
     data_nascimento: datetime.date
     telefone: Optional[str] = None
-    # Inclui o objeto de usuário público aninhado
     usuario: UsuarioPublic
 
     class Config:
         from_attributes = True
 
 # ==================
-# Schemas de Especialidade (exemplo)
+# Schemas de Especialidade
 # ==================
 class EspecialidadePublic(BaseModel):
     id: int
@@ -58,7 +66,7 @@ class EspecialidadePublic(BaseModel):
         from_attributes = True
 
 # ==================
-# Schemas de Médico (pode ser expandido da mesma forma)
+# Schemas de Médico
 # ==================
 class MedicoPublic(BaseModel):
     id: uuid.UUID
