@@ -42,12 +42,19 @@ services:
     build:
       context: ./services/srv-agendamentos # contexto de build
       dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
       - "8002:8000" # Expondo a porta (8002)
     volumes:
       - ./services/srv-agendamentos:/code
     environment:
       - DATABASE_URL=postgresql://user:password@db-agendamentos/db_agendamentos
+      # As variáveis de segredo agora são lidas pelo 'env_file' acima,
+      # mas podemos mantê-las aqui para garantir a compatibilidade.
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
     depends_on:
       db-agendamentos:
         condition: service_healthy

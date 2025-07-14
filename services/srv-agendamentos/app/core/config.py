@@ -1,5 +1,4 @@
 # app/core/config.py
-import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -9,10 +8,13 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Serviço de Agendamentos Zello"
     API_V1_STR: str = "/api/v1"
 
-    # Configuração do banco de dados, lida do ambiente Docker
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "")
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    DATABASE_URL: str
 
     class Config:
         case_sensitive = True
+        env_file = ".env"
 
 settings = Settings()

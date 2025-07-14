@@ -15,14 +15,11 @@ class CRUDAgendamento:
         Cria um novo agendamento e atualiza o status do slot.
         Esta operação deve ser atômica.
         """
-        # 1. Verifica se o slot está realmente disponível
         if slot.status != StatusSlotEnum.DISPONIVEL:
             raise ValueError("Este horário não está mais disponível.")
 
-        # 2. Atualiza o status do slot para AGENDADO
         slot.status = StatusSlotEnum.AGENDADO
         
-        # 3. Cria o novo registro de agendamento
         db_agendamento = Agendamento(
             id=uuid.uuid4(),
             slot_id=slot.id,
