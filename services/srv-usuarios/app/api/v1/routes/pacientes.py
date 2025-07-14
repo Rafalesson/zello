@@ -8,7 +8,7 @@ from app.database.session import get_db
 from app.crud import crud_paciente, crud_usuario
 from app.schemas import paciente as paciente_schema
 from app.models import usuario as usuario_model
-from .auth import get_current_active_user
+from app.api.v1.deps import get_current_active_user
 
 router = APIRouter()
 

@@ -1,0 +1,26 @@
+# Requisitos do serviço de agendamentos
+fastapi
+
+# Framework para construção de APIs
+uvicorn[standard]
+
+# Biblioteca para manipulação de banco de dados
+sqlalchemy
+
+# Biblioteca para manipulação de banco de dados PostgreSQL
+psycopg2-binary
+
+# Biblioteca para manipulação de dados
+pydantic-settings
+
+# Biblioteca para manipulação de datas e horas
+pika
+
+# Biblioteca para autenticação e autorização
+python-jose[cryptography]
+
+# Biblioteca para manipulação de senhas
+passlib[bcrypt]
+
+# Biblioteca para fazer requisições HTTP entre serviços
+httpx
