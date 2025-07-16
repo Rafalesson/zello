@@ -12,6 +12,7 @@ interface User {
   email: string;
   user_id: string;
   tipo_usuario: 'PACIENTE' | 'MEDICO' | 'ADMIN';
+  foto_perfil_url?: string | null;
 }
 
 // Define a interface para o valor do nosso contexto

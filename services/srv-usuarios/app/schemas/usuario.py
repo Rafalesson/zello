@@ -20,6 +20,7 @@ class UsuarioPublic(UsuarioBase):
     tipo_usuario: TipoUsuarioEnum
     is_active: bool
     data_criacao: datetime.datetime
+    foto_perfil_url: Optional[str] = None
 
     class Config:
         from_attributes = True

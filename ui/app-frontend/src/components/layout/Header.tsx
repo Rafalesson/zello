@@ -1,41 +1,60 @@
 // src/components/layout/Header.tsx
 "use client";
-
+    
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/Button";
-// O LoginModal não é mais necessário aqui
-// import { LoginModal } from "../auth/LoginModal"; 
+import { LoginModal } from "../auth/LoginModal";
+import { HeartPulse, MessageCircle, User as UserIcon } from "lucide-react";
 
 export function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   return (
-    <header className="bg-white border-b border-slate-200">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="w-full py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="font-serif text-2xl font-bold text-slate-800">
-              Zello
+    <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-lg">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
+        {/* Lado Esquerdo: Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <HeartPulse className="h-7 w-7 text-slate-800" />
+          <span className="font-serif text-2xl font-bold text-slate-800">
+            Zello
+          </span>
+        </Link>
+
+        {/* Lado Direito: Ações */}
+        <div className="flex items-center gap-4">
+          <a
+            href="https://wa.me/5581999999999" // Exemplo de número
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-slate-600 hover:text-slate-900"
+            aria-label="Contato via WhatsApp"
+          >
+            <MessageCircle className="h-6 w-6" />
+          </a>
+          
+          {isAuthenticated && user ? (
+            // Se ESTÁ logado, mostra a foto do perfil (ou iniciais)
+            <Link href="/dashboard">
+              <div className="relative h-9 w-9 overflow-hidden rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-semibold">
+                {user.foto_perfil_url ? (
+                  <Image src={user.foto_perfil_url} alt="Foto do perfil" fill className="object-cover" />
+                ) : (
+                  // Fallback para a inicial do e-mail
+                  user.email.charAt(0).toUpperCase()
+                )}
+              </div>
             </Link>
-          </div>
-          <div className="ml-10 space-x-4">
-            {isAuthenticated ? (
-              // Se o usuário estiver autenticado, mostra Dashboard e Sair
-              <>
-                <Link href="/dashboard">
-                   <Button variant="ghost" size="sm">Dashboard</Button>
-                </Link>
-                <Button onClick={logout} variant="secondary" size="sm">Sair</Button>
-              </>
-            ) : (
-              // Se não estiver autenticado, não renderiza nada no header.
-              // O botão principal estará na home page.
-              null 
-            )}
-          </div>
+          ) : (
+            // Se NÃO ESTÁ logado, o ícone de perfil abre o modal de login
+            <LoginModal>
+              <button className="text-slate-600 hover:text-slate-900" aria-label="Acessar conta">
+                <UserIcon className="h-6 w-6" />
+              </button>
+            </LoginModal>
+          )}
         </div>
-      </nav>
+      </div>
     </header>
   );
 }

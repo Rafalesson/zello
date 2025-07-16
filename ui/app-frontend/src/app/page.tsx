@@ -1,19 +1,17 @@
 // src/app/page.tsx
-"use client"; // Necessário para usar o componente LoginModal que é do cliente
+"use client";
 
-import { LoginModal } from "@/components/auth/LoginModal";
 import { Button } from "@/components/ui/Button";
-import { Stethoscope, CalendarDays, Video } from "lucide-react"; // Ícones para a seção de benefícios
+import { Stethoscope, CalendarDays, Video } from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
   return (
-    // Usamos um fragmento para não adicionar um div extra desnecessário
     <>
       {/* Seção 1: Hero - A primeira impressão */}
       <section className="w-full py-20 md:py-32 lg:py-40">
         <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center space-y-8 text-center"> {/* Aumentei o espaçamento para 'space-y-8' */}
+          <div className="flex flex-col items-center space-y-8 text-center">
             <div className="space-y-4">
               <h1 className="font-serif text-4xl font-bold tracking-tighter sm:text-5xl md:text-1xl text-slate-900">
                 A saúde que você precisa, onde você estiver.
@@ -22,17 +20,10 @@ export default function HomePage() {
                 Zello conecta você a profissionais de saúde qualificados por meio de teleconsultas seguras e convenientes. Cuide de si mesmo sem sair de casa.
               </p>
             </div>
-
-            {/* Chamada para Ação (CTA) com botões ajustados */}
-            <div className="mx-auto w-full max-w-sm grid grid-cols-2 gap-4">
-              {/* O LoginModal agora tem seu botão com largura total (w-full) por padrão */}
-              <LoginModal buttonSize="lg" buttonVariant="primary" />
-              
-              {/* Ajuste no Link para funcionar corretamente com o `asChild` do nosso componente Button */}
-              <Link href="/cadastro" legacyBehavior passHref>
-                <Button asChild variant="outline" size="lg">
-                  <a>Criar Conta</a>
-                </Button>
+            {/* O botão agora aponta para a nova página de busca */}
+            <div className="mt-8">
+              <Link href="/buscar">
+                <Button size="lg">Saiba Mais</Button>
               </Link>
             </div>
           </div>
@@ -50,7 +41,6 @@ export default function HomePage() {
               Nossa plataforma foi desenhada para ser simples, segura e eficiente.
             </p>
           </div>
-          {/* Grid responsivo para os cartões de benefícios */}
           <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:grid-cols-3">
             {/* Benefício 1 */}
             <div className="flex flex-col items-center text-center gap-2">

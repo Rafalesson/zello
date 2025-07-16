@@ -1,39 +1,33 @@
 // src/components/auth/LoginModal.tsx
 "use client";
 
-import { Modal, ModalContent, ModalTrigger } from "@/components/ui/Modal";
-import { Button, type ButtonProps } from "@/components/ui/Button";
-import { LoginForm } from "../forms/LoginForm";
+import React from "react";
 import Image from "next/image";
+import { Modal, ModalContent, ModalTrigger, DialogTitle, DialogDescription } from "@/components/ui/Modal";
+import { LoginForm } from "../forms/LoginForm";
 
-interface LoginModalProps {
-  buttonSize?: ButtonProps['size'];
-  buttonVariant?: ButtonProps['variant'];
-  buttonClassName?: string; // Propriedade adicionada para classes customizadas
-}
-
-export function LoginModal({ buttonSize, buttonVariant, buttonClassName }: LoginModalProps) {
+export function LoginModal({ children }: { children: React.ReactNode }) {
   return (
     <Modal>
-      <ModalTrigger asChild>
-        {/* Passamos a nova prop de classe para o botão */}
-        <Button variant={buttonVariant} size={buttonSize} className={buttonClassName}>
-          Entrar
-        </Button>
-      </ModalTrigger>
-
+      <ModalTrigger asChild>{children}</ModalTrigger>
       <ModalContent className="p-0 max-w-4xl overflow-hidden">
+        <DialogTitle className="sr-only">Login</DialogTitle>
+        <DialogDescription className="sr-only">Formulário para acessar sua conta Zello.</DialogDescription>
+
         <div className="grid grid-cols-1 md:grid-cols-2">
+
+          {/* Coluna da Esquerda (IMAGEM) */}
           <div className="hidden md:block relative h-full">
             <Image
-              src="/images/login-hero.svg"
+              src="/images/login-hero.svg" 
               alt="Profissional de saúde utilizando um laptop"
               fill
               className="object-cover"
             />
           </div>
 
-          <div className="p-8 md:p-12 flex flex-col justify-center bg-white">
+          {/* Coluna da Direita (FORMULÁRIO) */}
+          <div className="p-8 md:p-12 flex flex-col justify-center">
             <div className="flex flex-col space-y-2 text-center mb-8">
               <h1 className="font-serif text-4xl font-bold tracking-tight text-slate-900">
                 Bem-vindo(a)
@@ -44,6 +38,7 @@ export function LoginModal({ buttonSize, buttonVariant, buttonClassName }: Login
             </div>
             <LoginForm />
           </div>
+
         </div>
       </ModalContent>
     </Modal>
