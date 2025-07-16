@@ -106,5 +106,29 @@ def seed_specialties():
         db.commit()
         typer.secho(f"{len(initial_specialties)} especialidades criadas com sucesso!", fg=typer.colors.GREEN)
 
+@app.command()
+def change_password(
+    email: str = typer.Argument(..., help="O e-mail do usuário cuja senha será alterada."),
+    password: str = typer.Option(
+        ..., 
+        "--password",
+        prompt=True,
+        hide_input=True,
+        confirmation_prompt=True,
+        help="A nova senha."
+    )
+):
+    """Altera a senha de um usuário existente."""
+    with get_db_session() as db:
+        user = crud_usuario.get_by_email(db, email=email)
+        if not user:
+            typer.secho(f"Erro: Usuário com e-mail '{email}' não encontrado.", fg=typer.colors.RED)
+            raise typer.Exit(code=1)
+            
+        hashed_password = get_password_hash(password)
+        crud_usuario.update(db, db_obj=user, obj_in={"senha_hash": hashed_password})
+        
+        typer.secho(f"Senha do usuário '{email}' alterada com sucesso!", fg=typer.colors.GREEN)
+
 if __name__ == "__main__":
     app()

@@ -23,3 +23,12 @@ def create(db: Session, *, user_data: Dict[str, Any]) -> Usuario:
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+def update(db: Session, *, db_obj: Usuario, obj_in: Dict[str, Any]) -> Usuario:
+    """Atualiza um registro de usuário a partir de um dicionário."""
+    for field, value in obj_in.items():
+        setattr(db_obj, field, value)
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
