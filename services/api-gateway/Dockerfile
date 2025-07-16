@@ -1,8 +1,8 @@
 # Dockerfile para o serviço em Go usando Multi-Stage Build
 
 # --- Estágio de Build ---
-# Usamos a imagem completa do Go para compilar a aplicação.
-FROM golang:1.21-alpine AS builder
+# CORREÇÃO: Atualizamos a versão do Go para a 1.23, conforme exigido pelo go.mod
+FROM golang:1.23-alpine AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api-gateway .
 
 # --- Estágio de Produção ---
 # Usamos a imagem 'scratch', que é vazia, para a imagem final.
-# Isso resulta em uma imagem extremamente pequena e segura.
 FROM scratch
 
 WORKDIR /root/

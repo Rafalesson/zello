@@ -1,23 +1,66 @@
-// main.go
 package main
 
 import (
 	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"time"
+
+	"github.com/gin-contrib/cors" // Importa o novo pacote de CORS
 	"github.com/gin-gonic/gin"
 )
 
+// reverseProxy cria um manipulador de proxy para um serviço de destino.
+func reverseProxy(target string) gin.HandlerFunc {
+	url, err := url.Parse(target)
+	if err != nil {
+		panic(err)
+	}
+	proxy := httputil.NewSingleHostReverseProxy(url)
+	return func(c *gin.Context) {
+		proxy.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
 func main() {
-	// Inicializa o roteador Gin com a configuração padrão.
 	router := gin.Default()
 
-	// Define uma rota GET para a raiz do serviço.
+	// --- Configuração do CORS ---
+	// Esta configuração é permissiva para o ambiente de desenvolvimento.
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"}, // Permite requisições do nosso frontend
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	// Define os serviços de backend.
+	userService := reverseProxy("http://usuarios-service:8000")
+	agendamentoService := reverseProxy("http://srv-agendamentos:8000")
+
+	// --- Roteamento para os Microsserviços ---
+	v1 := router.Group("/api/v1")
+	{
+		// Rotas do serviço de usuários
+		v1.Any("/auth/*proxyPath", userService)
+		v1.Any("/pacientes/*proxyPath", userService)
+		v1.Any("/medicos/*proxyPath", userService)
+		v1.Any("/usuarios/*proxyPath", userService)
+
+		// Rotas do serviço de agendamentos
+		v1.Any("/agendas/*proxyPath", agendamentoService)
+		v1.Any("/agendamentos/*proxyPath", agendamentoService)
+	}
+
+	// Rota de saúde do próprio gateway
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"servico": "API Gateway",
-			"status": "operacional",
+			"serviço": "API Gateway Zello",
+			"status":  "operacional",
 		})
 	})
 
-	// Inicia o servidor na porta 8080.
 	router.Run(":8080")
 }
