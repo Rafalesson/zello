@@ -1,4 +1,4 @@
-# zello/services/srv-usuarios/app/api/v1/deps.py
+# app/api/v1/deps.py
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
@@ -16,10 +16,12 @@ def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)], 
     db: Session = Depends(get_db)
 ) -> usuario_model.Usuario:
-    """Decodes token and retrieves user from DB."""
+    """
+    Dependência principal para decodificar o token e buscar o usuário no banco.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail="Não foi possível validar as credenciais",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
@@ -38,7 +40,9 @@ def get_current_user(
 def get_current_active_user(
     current_user: Annotated[usuario_model.Usuario, Depends(get_current_user)]
 ) -> usuario_model.Usuario:
-    """Ensures the user from the token is active."""
+    """
+    Dependência que garante que o usuário obtido do token está ativo.
+    """
     if not current_user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(status_code=400, detail="Usuário inativo")
     return current_user

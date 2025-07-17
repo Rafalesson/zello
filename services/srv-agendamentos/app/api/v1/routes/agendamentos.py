@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 from app.database.session import get_db
 from app.crud.crud_agendamento import crud_agendamento
 from app.schemas import agendamento as agendamento_schema
-from app.clients.usuario_client import usuario_client
 from .auth import get_current_user_payload
+from app.clients.usuario_client import usuario_client
 
 router = APIRouter()
 
@@ -18,7 +18,6 @@ async def create_agendamento(
     current_user_payload: dict = Depends(get_current_user_payload)
 ):
     """Cria um novo agendamento para o paciente autenticado."""
-    # Valida o tipo de usuário usando a string do payload do token
     if current_user_payload.get("tipo_usuario") != "PACIENTE":
         raise HTTPException(status_code=403, detail="Apenas pacientes podem fazer agendamentos.")
 
