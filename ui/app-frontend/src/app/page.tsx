@@ -20,10 +20,12 @@ export default function HomePage() {
                 Zello conecta você a profissionais de saúde qualificados por meio de teleconsultas seguras e convenientes. Cuide de si mesmo sem sair de casa.
               </p>
             </div>
-            {/* O botão agora aponta para a nova página de busca */}
+            {/* O botão agora aponta corretamente para a nova página de busca */}
             <div className="mt-8">
               <Link href="/buscar">
-                <Button size="lg">Saiba Mais</Button>
+                <Button size="lg" variant="primary">
+                  Encontrar um profissional
+                </Button>
               </Link>
             </div>
           </div>
@@ -34,7 +36,7 @@ export default function HomePage() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-slate-900">
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-3xl text-slate-900">
               Uma nova forma de cuidar de você
             </h2>
             <p className="max-w-[900px] text-slate-600 md:text-lg">
@@ -42,7 +44,6 @@ export default function HomePage() {
             </p>
           </div>
           <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:grid-cols-3">
-            {/* Benefício 1 */}
             <div className="flex flex-col items-center text-center gap-2">
               <div className="bg-slate-100 p-4 rounded-full">
                 <Stethoscope className="h-8 w-8 text-slate-900" />
@@ -52,7 +53,6 @@ export default function HomePage() {
                 Acesse uma rede de médicos e profissionais de diversas especialidades, prontos para te atender.
               </p>
             </div>
-            {/* Benefício 2 */}
             <div className="flex flex-col items-center text-center gap-2">
               <div className="bg-slate-100 p-4 rounded-full">
                 <CalendarDays className="h-8 w-8 text-slate-900" />
@@ -62,7 +62,6 @@ export default function HomePage() {
                 Encontre horários que se encaixam na sua rotina e agende suas consultas de forma rápida e fácil.
               </p>
             </div>
-            {/* Benefício 3 */}
             <div className="flex flex-col items-center text-center gap-2">
               <div className="bg-slate-100 p-4 rounded-full">
                 <Video className="h-8 w-8 text-slate-900" />

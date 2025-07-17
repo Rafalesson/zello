@@ -14,7 +14,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         {/* Lado Esquerdo: Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/buscar" className="flex items-center gap-2">
           <HeartPulse className="h-7 w-7 text-slate-800" />
           <span className="font-serif text-2xl font-bold text-slate-800">
             Zello
