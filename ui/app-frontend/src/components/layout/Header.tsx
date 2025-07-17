@@ -10,11 +10,14 @@ import { HeartPulse, MessageCircle, User as UserIcon } from "lucide-react";
 export function Header() {
   const { isAuthenticated, user } = useAuth();
 
+  // Define o link do logo com base no estado de autenticação
+  const logoHref = isAuthenticated ? "/buscar" : "/";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-lg">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Lado Esquerdo: Logo */}
-        <Link href="/buscar" className="flex items-center gap-2">
+        {/* Lado Esquerdo: Logo com link dinâmico */}
+        <Link href={logoHref} className="flex items-center gap-2">
           <HeartPulse className="h-7 w-7 text-slate-800" />
           <span className="font-serif text-2xl font-bold text-slate-800">
             Zello
@@ -34,13 +37,12 @@ export function Header() {
           </a>
           
           {isAuthenticated && user ? (
-            // Se ESTÁ logado, mostra a foto do perfil (ou iniciais)
+            // Se ESTÁ logado, mostra a foto do perfil
             <Link href="/dashboard">
               <div className="relative h-9 w-9 overflow-hidden rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-semibold">
                 {user.foto_perfil_url ? (
                   <Image src={user.foto_perfil_url} alt="Foto do perfil" fill className="object-cover" />
                 ) : (
-                  // Fallback para a inicial do e-mail
                   user.email.charAt(0).toUpperCase()
                 )}
               </div>

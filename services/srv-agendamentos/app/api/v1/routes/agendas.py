@@ -1,4 +1,3 @@
-# app/api/v1/routes/agendas.py
 import uuid
 import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -8,8 +7,7 @@ from typing import List, Optional
 from app.database.session import get_db
 from app.crud import crud_agenda
 from app.schemas import slot_horario as slot_schema
-from app.clients import usuario_client # Importando o novo cliente
-from .auth import get_current_user_payload # Importando a segurança real
+from .auth import get_current_user_payload
 
 router = APIRouter()
 
