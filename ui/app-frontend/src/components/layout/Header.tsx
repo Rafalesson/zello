@@ -1,6 +1,6 @@
 // src/components/layout/Header.tsx
 "use client";
-    
+
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
@@ -35,13 +35,18 @@ export function Header() {
           >
             <MessageCircle className="h-6 w-6" />
           </a>
-          
+
           {isAuthenticated && user ? (
             // Se ESTÁ logado, mostra a foto do perfil
             <Link href="/dashboard">
               <div className="relative h-9 w-9 overflow-hidden rounded-full bg-slate-200 flex items-center justify-center text-slate-600 font-semibold">
                 {user.foto_perfil_url ? (
-                  <Image src={user.foto_perfil_url} alt="Foto do perfil" fill className="object-cover" />
+                  <Image
+                    src={user.foto_perfil_url}
+                    alt="Foto do perfil"
+                    fill
+                    className="object-cover"
+                  />
                 ) : (
                   user.email.charAt(0).toUpperCase()
                 )}
@@ -50,7 +55,10 @@ export function Header() {
           ) : (
             // Se NÃO ESTÁ logado, o ícone de perfil abre o modal de login
             <LoginModal>
-              <button className="text-slate-600 hover:text-slate-900" aria-label="Acessar conta">
+              <button
+                className="text-slate-600 hover:text-slate-900"
+                aria-label="Acessar conta"
+              >
                 <UserIcon className="h-6 w-6" />
               </button>
             </LoginModal>
