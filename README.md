@@ -1,6 +1,6 @@
 # 🩺 Projeto Zello - Plataforma de Telemedicina
 
-![Zello Home Page](./.github/zello-homepage.png)
+![Zello Home Page](./.github/zello-homepage.jpeg)
 **Zello** é uma plataforma de telemedicina moderna e distribuída, projetada para conectar pacientes e médicos de forma simples, segura e eficiente. Este projeto foi desenvolvido com foco em arquitetura de microsserviços, comunicação assíncrona e práticas modernas de desenvolvimento de software, atendendo aos requisitos da disciplina de Sistemas Distribuídos.
 
 ---
