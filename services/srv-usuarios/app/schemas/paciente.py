@@ -14,10 +14,12 @@ class PacienteCreate(PacienteBase):
     usuario: UsuarioCreate
 
 class PacienteUpdate(BaseModel):
+    """Schema para a atualização de um perfil de paciente."""
     nome_completo: Optional[str] = None
     data_nascimento: Optional[datetime.date] = None
     telefone: Optional[str] = None
     usuario: Optional[UsuarioUpdate] = None
+
 
 class PacientePublic(PacienteBase):
     id: uuid.UUID

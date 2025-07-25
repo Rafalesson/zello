@@ -9,47 +9,45 @@ import { Mail, Lock } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-// O Checkbox não é mais necessário aqui
-// import { Checkbox } from "@/components/ui/Checkbox"; 
-import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
-// Schema de validação simplificado, sem o 'rememberMe'
+// Schema de validação com a sintaxe moderna e mais robusta
 const loginSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um e-mail válido." }),
-  password: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres." }),
+  email: z.string({
+      required_error: "O campo de e-mail é obrigatório.",
+    })
+    .min(1, { message: "O e-mail não pode estar vazio." })
+    .email({ message: "Por favor, insira um e-mail válido." }),
+  password: z.string({
+      required_error: "O campo de senha é obrigatório.",
+    })
+    .min(8, { message: "A senha deve ter no mínimo 8 caracteres." }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { login } = useAuth();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
-  const { isSubmitting } = form.formState;
+  const { formState: { errors, isSubmitting } } = form;
 
-  // Função para submissão BEM-SUCEDIDA
   async function onSubmit(data: LoginFormValues) {
-    console.log("VALIDAÇÃO OK! Dados enviados:", data);
-    setError(null);
+    setApiError(null);
     try {
       await login({ username: data.email, password: data.password });
     } catch (err: any) {
-      setError(err.message || "Ocorreu um erro inesperado.");
+      setApiError(err.message || "Ocorreu um erro inesperado.");
     }
-  }
-  
-  // Função para submissão que FALHOU na validação
-  function onInvalid(errors: any) {
-    console.error("VALIDAÇÃO FALHOU! Erros:", errors);
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
-      <div className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <div>
         <Input
           id="email"
           label="E-mail"
@@ -59,11 +57,11 @@ export function LoginForm() {
           disabled={isSubmitting}
           {...form.register("email")}
         />
-        {form.formState.errors.email && (
-          <p className="text-sm text-red-600">{form.formState.errors.email.message}</p>
+        {errors.email && (
+          <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
-      <div className="space-y-4">
+      <div>
         <Input
           id="password"
           label="Senha"
@@ -73,20 +71,18 @@ export function LoginForm() {
           disabled={isSubmitting}
           {...form.register("password")}
         />
-        {form.formState.errors.password && (
-          <p className="text-sm text-red-600">{form.formState.errors.password.message}</p>
+        {errors.password && (
+          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
         )}
       </div>
-      
-      {/* Seção 'Lembrar de mim' e 'Esqueceu a senha' removida para simplificar */}
       <div className="flex items-center justify-end">
         <Link href="#" className="text-sm font-medium text-slate-900 hover:underline">
           Esqueceu a senha?
         </Link>
       </div>
 
-      {error && (
-        <p className="text-sm font-medium text-red-600 text-center">{error}</p>
+      {apiError && (
+        <p className="text-sm font-medium text-red-600 text-center">{apiError}</p>
       )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>

@@ -103,12 +103,6 @@ docker compose up --build -d
 - `--build`: Força a reconstrução das imagens.
 - `-d`: Executa os containers em segundo plano.
 
-Aguarde cerca de 1 minuto e verifique os containers com:
-
-```bash
-docker ps
-```
-
 ### 3.b. Inicie o Frontend
 
 ```bash

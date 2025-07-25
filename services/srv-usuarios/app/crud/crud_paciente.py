@@ -24,6 +24,10 @@ def get_multi(db: Session, *, skip: int = 0, limit: int = 100) -> List[Paciente]
         .all()
     )
 
+def get_by_usuario_id(db: Session, *, usuario_id: uuid.UUID) -> Optional[Paciente]:
+    """Busca um perfil de paciente pelo ID do usuário associado."""
+    return db.query(Paciente).filter(Paciente.usuario_id == usuario_id).first()
+
 def create_with_usuario(db: Session, *, paciente_data: Dict[str, Any]) -> Paciente:
     """Cria um novo paciente e seu respectivo usuário a partir de dicionários."""
     usuario_data = paciente_data["usuario"]
