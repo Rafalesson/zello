@@ -5,13 +5,14 @@ import { createContext, useContext, useState, ReactNode, useEffect } from 'react
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode'; // Usaremos uma biblioteca mais robusta para decodificar
+import { jwtDecode } from 'jwt-decode';
 
 // Define a interface para os dados do usuário que virão do token
 interface User {
   email: string;
   user_id: string;
   tipo_usuario: 'PACIENTE' | 'MEDICO' | 'ADMIN';
+  sexo: 'MASCULINO' | 'FEMININO' | 'OUTRO' | null;
   foto_perfil_url?: string | null;
 }
 
@@ -38,19 +39,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       try {
         const decoded = jwtDecode<User & { sub: string }>(token);
-        // O 'sub' é o email, que já temos. Vamos mapear para o nosso objeto User.
-        setUser({ email: decoded.sub, user_id: decoded.user_id, tipo_usuario: decoded.tipo_usuario });
+        setUser({ 
+          email: decoded.sub, 
+          user_id: decoded.user_id, 
+          tipo_usuario: decoded.tipo_usuario,
+          sexo: decoded.sexo,
+          foto_perfil_url: decoded.foto_perfil_url
+        });
       } catch (error) {
-        console.error("Token inválido:", error);
-        logout(); // Se o token for inválido, limpa tudo
+        console.error("Token inválido no cookie, limpando sessão:", error);
+        logout();
       }
     }
   }, []);
 
 
   const login = async (loginData: any) => {
-    console.log("3. Função login do AuthContext foi alcançada.");
-    
     try {
       const params = new URLSearchParams();
       params.append('username', loginData.username);
@@ -65,12 +69,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       Cookies.set('zello-token', access_token, { expires: 1, secure: process.env.NODE_ENV === 'production', sameSite: 'strict' });
       
       const decoded = jwtDecode<User & { sub: string }>(access_token);
-      setUser({ email: decoded.sub, user_id: decoded.user_id, tipo_usuario: decoded.tipo_usuario });
+      setUser({ 
+        email: decoded.sub, 
+        user_id: decoded.user_id, 
+        tipo_usuario: decoded.tipo_usuario,
+        sexo: decoded.sexo,
+        foto_perfil_url: decoded.foto_perfil_url
+      });
       
       router.push('/dashboard');
     } catch (error) {
-      console.error("Falha no login:", error);
-      throw new Error('E-mail ou senha inválidos.');
+      console.error("Falha na chamada de login:", error);
+
+      // --- LÓGICA DE ERRO APRIMORADA ---
+      if (axios.isAxiosError(error) && error.response) {
+        // Captura a mensagem de 'detail' vinda do nosso backend FastAPI
+        throw new Error(error.response.data.detail || 'E-mail ou senha inválidos.');
+      }
+      // Mantém um fallback para erros de rede (ex: API offline)
+      throw new Error('Não foi possível conectar ao servidor. Tente novamente mais tarde.');
     }
   };
 
@@ -83,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = { isAuthenticated: !!user, user, login, logout };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-} // <--- A CHAVE FALTANTE ESTAVA PROVAVELMENTE AQUI
+}
 
 // Hook customizado para facilitar o uso do contexto
 export function useAuth() {

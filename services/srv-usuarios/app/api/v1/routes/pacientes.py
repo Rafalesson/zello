@@ -23,28 +23,26 @@ def criar_novo_paciente(
     paciente_data = paciente_in.model_dump()
     return crud_paciente.create_with_usuario(db=db, paciente_data=paciente_data)
 
-@router.get("/", response_model=List[paciente_schema.PacientePublic])
-def read_pacientes(
-    db: Session = Depends(get_db),
-    skip: int = 0,
-    limit: int = 100,
-    current_user: usuario_model.Usuario = Depends(get_current_active_user)
-):
-    if current_user.tipo_usuario != usuario_model.TipoUsuarioEnum.ADMIN:
-        raise HTTPException(status_code=403, detail="Acesso não autorizado.")
-    return crud_paciente.get_multi(db, skip=skip, limit=limit)
-
-@router.get("/{paciente_id}", response_model=paciente_schema.PacientePublic)
+@router.get("/{usuario_id}", response_model=paciente_schema.PacientePublic, summary="Busca um Paciente por ID de Usuário")
 def read_paciente(
-    paciente_id: uuid.UUID,
+    usuario_id: uuid.UUID,
     db: Session = Depends(get_db),
     current_user: usuario_model.Usuario = Depends(get_current_active_user)
 ):
-    paciente = crud_paciente.get(db, paciente_id=paciente_id)
-    if not paciente:
-        raise HTTPException(status_code=404, detail="Paciente não encontrado")
-    if current_user.tipo_usuario != usuario_model.TipoUsuarioEnum.ADMIN and paciente.usuario_id != current_user.id:
+    """
+    Retorna os dados de um paciente específico, buscando pelo ID do usuário.
+    **Acesso: O próprio paciente ou administradores.**
+    """
+    # Lógica de Autorização: Garante que o usuário logado só pode buscar seu próprio perfil (a menos que seja admin)
+    if (current_user.tipo_usuario != usuario_model.TipoUsuarioEnum.ADMIN and 
+        current_user.id != usuario_id):
         raise HTTPException(status_code=403, detail="Acesso não autorizado.")
+    
+    # Usa a nova função de busca
+    paciente = crud_paciente.get_by_usuario_id(db, usuario_id=usuario_id)
+    if not paciente:
+        raise HTTPException(status_code=404, detail="Perfil de paciente não encontrado para este usuário")
+    
     return paciente
 
 @router.put("/{paciente_id}", response_model=paciente_schema.PacientePublic)

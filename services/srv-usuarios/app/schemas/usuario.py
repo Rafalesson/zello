@@ -13,7 +13,9 @@ class UsuarioCreate(UsuarioBase):
     tipo_usuario: TipoUsuarioEnum
 
 class UsuarioUpdate(BaseModel):
+    """Schema para a atualização de um registro de usuário."""
     is_active: Optional[bool] = None
+    foto_perfil_url: Optional[str] = None
 
 class UsuarioPublic(UsuarioBase):
     id: uuid.UUID
