@@ -12,21 +12,43 @@ from app.api.v1.deps import get_current_active_user
 
 router = APIRouter()
 
-@router.get("/", response_model=List[medico_schema.MedicoPublic], summary="Lista todos os Médicos ativos")
-def read_medicos(
+@router.get("/me", response_model=medico_schema.MedicoPublic, summary="Busca o perfil do médico logado")
+def read_medico_me(
     db: Session = Depends(get_db),
-    skip: int = 0,
-    limit: int = 100,
+    current_user: usuario_model.Usuario = Depends(get_current_active_user)
 ):
+    """Retorna os dados do perfil do médico autenticado."""
+    if current_user.tipo_usuario != usuario_model.TipoUsuarioEnum.MEDICO:
+        raise HTTPException(status_code=403, detail="Acesso não autorizado.")
+    medico = crud_medico.get_by_usuario_id(db, usuario_id=current_user.id)
+    if not medico:
+        raise HTTPException(status_code=404, detail="Perfil de médico não encontrado.")
+    return medico
+
+@router.put("/me", response_model=medico_schema.MedicoPublic, summary="Atualiza o perfil do médico logado")
+def update_medico_me(
+    medico_in: medico_schema.MedicoUpdate,
+    db: Session = Depends(get_db),
+    current_user: usuario_model.Usuario = Depends(get_current_active_user)
+):
+    """Atualiza o perfil do médico autenticado."""
+    if current_user.tipo_usuario != usuario_model.TipoUsuarioEnum.MEDICO:
+        raise HTTPException(status_code=403, detail="Acesso não autorizado.")
+    
+    medico = crud_medico.get_by_usuario_id(db, usuario_id=current_user.id)
+    if not medico:
+        raise HTTPException(status_code=404, detail="Perfil de médico não encontrado.")
+    
+    update_data = medico_in.model_dump(exclude_unset=True)
+    return crud_medico.update(db=db, db_obj=medico, obj_in=update_data)
+
+@router.get("/", response_model=List[medico_schema.MedicoPublic], summary="Lista todos os Médicos ativos")
+def read_medicos(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     """Retorna uma lista de perfis públicos de médicos ativos no sistema."""
-    medicos = crud_medico.get_multi(db, skip=skip, limit=limit)
-    return medicos
+    return crud_medico.get_multi(db, skip=skip, limit=limit)
 
 @router.get("/{medico_id}", response_model=medico_schema.MedicoPublic, summary="Busca um Médico por ID")
-def read_medico(
-    medico_id: uuid.UUID,
-    db: Session = Depends(get_db),
-):
+def read_medico(medico_id: uuid.UUID, db: Session = Depends(get_db)):
     """Retorna o perfil público de um médico específico."""
     db_medico = crud_medico.get(db, medico_id=medico_id)
     if not db_medico:
