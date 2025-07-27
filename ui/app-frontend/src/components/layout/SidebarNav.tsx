@@ -5,36 +5,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import { clsx } from "clsx";
-import { 
-  LayoutDashboard, 
-  CalendarPlus, 
-  History, 
-  User, 
-  LogOut 
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { UserProfile } from "./UserProfile";
-
-interface NavItem {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-}
+// CORREÇÃO: A importação agora aponta para o arquivo .tsx
+import { navConfig } from "@/config/dashboardNav.tsx"; 
 
 export function SidebarNav() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
-  const navItems: NavItem[] = [
-    { href: "/dashboard", label: "Visão Geral", icon: <LayoutDashboard className="h-5 w-5" /> },
-    { href: "/buscar", label: "Agendar Consulta", icon: <CalendarPlus className="h-5 w-5" /> },
-    { href: "/meus-agendamentos", label: "Meus Agendamentos", icon: <History className="h-5 w-5" /> },
-    { href: "/perfil", label: "Meu Perfil", icon: <User className="h-5 w-5" /> },
-  ];
+  const navItems = user?.tipo_usuario ? navConfig[user.tipo_usuario] : [];
 
   return (
-    // A classe 'rounded-xl' foi removida
-    <div className="flex flex-col h-full bg-white shadow-sm border border-slate-200">
+    <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-slate-200">
       <UserProfile />
 
       <nav className="flex-grow p-4">
